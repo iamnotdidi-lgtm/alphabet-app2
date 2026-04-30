@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Азбука</title>
+
+<style>
+body {
+  margin:0;
+  font-family: -apple-system, Arial;
+  background:#f7f4ef;
+  text-align:center;
+}
+
+h1 {
+  padding:20px;
+  font-size:28px;
+  color:#333;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:10px;
+  padding:10px;
+}
+
+.letter {
+  background:white;
+  border-radius:18px;
+  font-size:28px;
+  padding:18px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  cursor:pointer;
+}
+
+.letter:active {
+  transform:scale(0.95);
+}
+
+.detail {
+  display:none;
+  padding:15px;
+}
+
+.big {
+  font-size:90px;
+  margin:10px 0;
+}
+
+button {
+  padding:14px 18px;
+  margin:8px;
+  border:none;
+  border-radius:14px;
+  background:#e9e3da;
+  font-size:16px;
+}
+
+.images {
+  display:grid;
+  grid-template-columns: repeat(2,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+
+img {
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  border-radius:14px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Азбука</h1>
+
+<div id="grid" class="grid"></div>
+
+<div id="detail" class="detail">
+  <div class="big" id="bigLetter"></div>
+
+  <button onclick="speakLetter()">🔊 Буква</button>
+  <button onclick="speakWord()">🔊 Дума</button>
+
+  <div class="images" id="images"></div>
+
+  <button onclick="back()">⬅ Назад</button>
+</div>
+
+<script>
+
+const data = {
+"А": ["Агне","Акула","Ананас","Автомобил"],
+"Б": ["Бухал","Банан","Буква","Бисквита"],
+"В": ["Вълк","Вилица","Въже","Врата"],
+"Г": ["Грозде","Гора","Гълъб","Горила"],
+"Д": ["Дърво","Диня","Дъга","Делфин"],
+"Е": ["Елен","Елха","Езеро","Език"],
+"Ж": ["Жаба","Жираф","Желязо","Жена"],
+"З": ["Заек","Зебра","Звезда","Замък"],
+"И": ["Игла","Игуана"],
+"Й": [],
+"К": ["Коте","Колело","Кола","Книга"],
+"Л": ["Лъв","Луна","Лампа","Легло"],
+"М": ["Мечка","Маймуна","Мишка","Масло"],
+"Н": ["Небе","Нос","Нула","Нощ"],
+"О": ["Облак","Овца","Октопод","Око"],
+"П": ["Пеперуда","Пчела","Пингвин","Пикник"],
+"Р": ["Риба","Рак","Робот","Роза"],
+"С": ["Слон","Сламка","Слънце","Сърце"],
+"Т": ["Торта","Топка","Тигър","Тиква"],
+"У": ["Уста","Ухо","Училище","Улица"],
+"Ф": ["Фар","Фъстък","Фея","Фенер"],
+"Х": ["Хляб","Хипопотам","Хавлия","Хапче"],
+"Ц": ["Царевица","Цвете","Цирк","Целувка"],
+"Ч": ["Чанта","Череша","Чай","Черупка"],
+"Ш": ["Шапка","Шоколад","Шише","Шал"],
+"Щ": ["Щит","Щъркел","Щастие"],
+"Ъ": [],
+"Ь": [],
+"Ю": ["Ютия"],
+"Я": ["Ягода","Яйце","Ябълка","Ято птици"]
+};
+
+const grid = document.getElementById("grid");
+
+Object.keys(data).forEach(letter => {
+  const div = document.createElement("div");
+  div.className="letter";
+  div.innerText=letter;
+  div.onclick=()=>openLetter(letter);
+  grid.appendChild(div);
+});
+
+let currentLetter="";
+let currentWords=[];
+
+function openLetter(letter){
+  currentLetter=letter;
+  currentWords=data[letter];
+
+  document.getElementById("grid").style.display="none";
+  document.getElementById("detail").style.display="block";
+  document.getElementById("bigLetter").innerText=letter;
+
+  const imagesDiv=document.getElementById("images");
+  imagesDiv.innerHTML="";
+
+  currentWords.forEach(word=>{
+    const img=document.createElement("img");
+
+    // stable real image source (not broken Unsplash)
+    img.src="https://source.unsplash.com/400x400/?" + encodeURIComponent(word);
+
+    imagesDiv.appendChild(img);
+  });
+}
+
+function speakLetter(){
+  const msg=new SpeechSynthesisUtterance(currentLetter);
+  msg.lang="bg-BG";
+  speechSynthesis.speak(msg);
+}
+
+function speakWord(){
+  if(currentWords.length>0){
+    const msg=new SpeechSynthesisUtterance(currentWords[0]);
+    msg.lang="bg-BG";
+    speechSynthesis.speak(msg);
+  }
+}
+
+function back(){
+  document.getElementById("grid").style.display="grid";
+  document.getElementById("detail").style.display="none";
+}
+
+</script>
+
+</body>
+</html>
